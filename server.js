@@ -1,12 +1,19 @@
 const express = require("express");
 const app = express();
 
-app.get("/vehicle", (req, res) => {
-  res.json({
-    battery: 75,
-    range: 320,
-    charging: false
+app.get("/connect", async (req, res) => {
+
+  const response = await fetch("https://api.enode.io/users", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer TON_ACCESS_TOKEN",
+      "Content-Type": "application/json"
+    }
   });
+
+  const data = await response.json();
+
+  res.json(data);
 });
 
 // 🔥 IMPORTANT RENDER

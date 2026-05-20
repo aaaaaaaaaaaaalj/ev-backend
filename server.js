@@ -16,7 +16,7 @@ app.get("/token", async (req, res) => {
   try {
 
     const response = await fetch(
-      "https://oauth.production.enode.io/oauth2/token",
+      "https://oauth.sandbox.enode.io/oauth2/token",
       {
         method: "POST",
 

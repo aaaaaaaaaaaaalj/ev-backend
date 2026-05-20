@@ -1,20 +1,12 @@
 const express = require("express");
 const app = express();
 
-app.get("/connect", async (req, res) => {
+app.get("/login", (req, res) => {
+  const url = `https://enode.com/oauth/authorize?client_id=TON_CLIENT_ID&response_type=code&redirect_uri=https://ev-backend-259f.onrender.com/callback`;
 
-  const response = await fetch("https://api.enode.io/users", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer TON_ACCESS_TOKEN",
-      "Content-Type": "application/json"
-    }
-  });
-
-  const data = await response.json();
-
-  res.json(data);
+  res.redirect(url);
 });
+
 
 // 🔥 IMPORTANT RENDER
 const PORT = process.env.PORT || 10000;

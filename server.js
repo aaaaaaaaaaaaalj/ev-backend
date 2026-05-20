@@ -1,7 +1,12 @@
 const express = require("express");
 const app = express();
 
-// ✅ Route LOGIN
+// ✅ PAGE TEST
+app.get("/", (req, res) => {
+  res.send("Server OK ✅");
+});
+
+// ✅ LOGIN ENODE
 app.get("/login", (req, res) => {
   const url = "https://api.enode.io/oauth/authorize" +
     "?client_id=a7be4e42-9e37-47c0-a935-66124b47ace6" +
@@ -11,18 +16,17 @@ app.get("/login", (req, res) => {
   res.redirect(url);
 });
 
-// ✅ Route CALLBACK (TRÈS IMPORTANT)
+// ✅ CALLBACK
 app.get("/callback", (req, res) => {
   const code = req.query.code;
-
   console.log("Code reçu :", code);
-
   res.send("Code reçu : " + code);
 });
 
-// 🔥 IMPORTANT RENDER
+// 🔥 PORT RENDER
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });
+``

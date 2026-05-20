@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 app.get("/login", (req, res) => {
-  const url = `https://enode.com/oauth/authorize?client_id=TON_CLIENT_ID&response_type=code&redirect_uri=https://ev-backend-259f.onrender.com/callback`;
+  const url = `https://api.enode.io/oauth/authorize?client_id=TON_CLIENT_ID&response_type=code&redirect_uri=https://ev-backend-259f.onrender.com/callback`;
 
   res.redirect(url);
 });

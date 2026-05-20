@@ -3,8 +3,9 @@ const fetch = require("node-fetch");
 
 const app = express();
 
-const CLIENT_ID = "a4dd7f4b-4452-4487-8654-9e93827c9ce2";
-const CLIENT_SECRET = "9684660118740aff9f063ed3b0330ff10b29c289";
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+
 
 app.get("/", (req, res) => {
   res.send("Backend Enode OK");

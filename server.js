@@ -1,32 +1,26 @@
-const express = require("express");
-const app = express();
+app.get("/token", async (req, res) => {
 
-// ✅ PAGE TEST
-app.get("/", (req, res) => {
-  res.send("Server OK ✅");
+  const response = await fetch(
+    "https://oauth.production.enode.io/oauth2/token",
+    {
+      method: "POST",
+
+      headers: {
+        Authorization:
+          "Basic " +
+          Buffer.from(
+            "a4dd7f4b-4452-4487-8654-9e93827c9ce2:9684660118740aff9f063ed3b0330ff10b29c289"
+          ).toString("base64"),
+
+        "Content-Type":
+          "application/x-www-form-urlencoded"
+      },
+
+      body: "grant_type=client_credentials"
+    }
+  );
+
+  const data = await response.json();
+
+  res.json(data);
 });
-
-// ✅ LOGIN ENODE
-app.get("/login", (req, res) => {
-  const url = "https://api.enode.io/oauth/authorize" +
-    "?client_id=a7be4e42-9e37-47c0-a935-66124b47ace6" +
-    "&response_type=code" +
-    "&redirect_uri=https://ev-backend-259f.onrender.com/callback";
-
-  res.redirect(url);
-});
-
-// ✅ CALLBACK
-app.get("/callback", (req, res) => {
-  const code = req.query.code;
-  console.log("Code reçu :", code);
-  res.send("Code reçu : " + code);
-});
-
-// 🔥 PORT RENDER
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
-});
-``

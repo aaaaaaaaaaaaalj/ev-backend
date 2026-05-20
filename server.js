@@ -1,9 +1,10 @@
 const express = require("express");
+const fetch = require("node-fetch");
 
 const app = express();
 
-const CLIENT_ID = "TON_CLIENT_ID";
-const CLIENT_SECRET = "TON_CLIENT_SECRET";
+const CLIENT_ID = "a4dd7f4b-4452-4487-8654-9e93827c9ce2";
+const CLIENT_SECRET = "9684660118740aff9f063ed3b0330ff10b29c289";
 
 app.get("/", (req, res) => {
   res.send("Backend Enode OK");
@@ -22,7 +23,7 @@ app.get("/token", async (req, res) => {
           Authorization:
             "Basic " +
             Buffer.from(
-              a4dd7f4b-4452-4487-8654-9e93827c9ce2 + ":" + 9684660118740aff9f063ed3b0330ff10b29c289
+              CLIENT_ID + ":" + CLIENT_SECRET
             ).toString("base64"),
 
           "Content-Type":

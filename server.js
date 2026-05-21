@@ -13,7 +13,7 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 async function getAccessToken() {
 
   const response = await fetch(
-    "https://oauth.production.enode.io/oauth2/token",
+    "https://oauth.sandbox.enode.io/oauth2/token",
     {
       method: "POST",
 
@@ -80,7 +80,7 @@ app.get("/link", async (req, res) => {
     const userId = "mon-user-123";
 
     const response = await fetch(
-      `https://enode-api.production.enode.io/users/${userId}/link`,
+      `https://enode-api.sandbox.enode.io/users/${userId}/link`,
       {
         method: "POST",
 
@@ -125,7 +125,7 @@ app.get("/vehicles", async (req, res) => {
     const token = await getAccessToken();
 
     const response = await fetch(
-      "https://enode-api.production.enode.io/vehicles",
+      "https://enode-api.sandbox.enode.io/vehicles",
       {
         headers: {
           Authorization: `Bearer ${token}`

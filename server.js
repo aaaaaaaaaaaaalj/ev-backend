@@ -1,108 +1,80 @@
 const express = require("express");
 const fetch = require("node-fetch");
+require("dotenv").config();
 
 const app = express();
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
 
 // =========================
-// Récupérer access token
-// =========================
-
-async function getAccessToken() {
-
-  const response = await fetch(
-    "https://oauth.sandbox.enode.io/oauth2/token",
-    {
-      method: "POST",
-
-      headers: {
-        Authorization:
-          "Basic " +
-          Buffer.from(
-            CLIENT_ID + ":" + CLIENT_SECRET
-          ).toString("base64"),
-
-        "Content-Type":
-          "application/x-www-form-urlencoded"
-      },
-
-      body: "grant_type=client_credentials"
-    }
-  );
-
-  const data = await response.json();
-
-  return data.access_token;
-}
-
-// =========================
-// Route accueil
+// Accueil
 // =========================
 
 app.get("/", (req, res) => {
-  res.send("Backend Enode OK");
+  res.send("Backend Smartcar OK");
 });
 
 // =========================
-// Tester token
-// =========================
-
-app.get("/token", async (req, res) => {
-
-  try {
-
-    const token = await getAccessToken();
-
-    res.json({
-      access_token: token
-    });
-
-  } catch (err) {
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
-// =========================
-// Créer utilisateur Enode
+// Générer URL Smartcar Connect
 // =========================
 
 app.get("/link", async (req, res) => {
 
+  const scopes = [
+    "read_vehicle_info",
+    "read_odometer",
+    "read_battery",
+    "read_charge",
+    "read_location"
+  ].join(" ");
+
+  const url =
+    `https://connect.smartcar.com/oauth/authorize` +
+    `?response_type=code` +
+    `&client_id=${CLIENT_ID}` +
+    `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+    `&scope=${encodeURIComponent(scopes)}` +
+    `&mode=test`;
+
+  res.json({
+    connect_url: url
+  });
+});
+
+// =========================
+// Callback Smartcar
+// =========================
+
+app.get("/exchange", async (req, res) => {
+
   try {
 
-    const token = await getAccessToken();
+    const code = req.query.code;
 
-    const userId = "mon-user-123";
+    if (!code) {
+      return res.status(400).json({
+        error: "Missing code"
+      });
+    }
 
     const response = await fetch(
-      `https://enode-api.sandbox.enode.io/users/${userId}/link`,
+      "https://auth.smartcar.com/oauth/token",
       {
         method: "POST",
 
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+          "Content-Type":
+            "application/x-www-form-urlencoded"
         },
 
-        body: JSON.stringify({
-
-          vendorType: "vehicle",
-
-          scopes: [
-            "vehicle:read:data",
-            "vehicle:read:location",
-            "vehicle:control:charging"
-          ],
-
-          language: "fr-FR",
-
-          redirectUri: "https://google.com"
-        })
+        body:
+          `grant_type=authorization_code` +
+          `&code=${code}` +
+          `&client_id=${CLIENT_ID}` +
+          `&client_secret=${CLIENT_SECRET}` +
+          `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`
       }
     );
 
@@ -118,17 +90,21 @@ app.get("/link", async (req, res) => {
   }
 });
 
+// =========================
+// Véhicules
+// =========================
+
 app.get("/vehicles", async (req, res) => {
 
   try {
 
-    const token = await getAccessToken();
+    const accessToken = req.query.token;
 
     const response = await fetch(
-      "https://enode-api.sandbox.enode.io/vehicles",
+      "https://api.smartcar.com/v2.0/vehicles",
       {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         }
       }
     );
@@ -144,6 +120,39 @@ app.get("/vehicles", async (req, res) => {
     });
   }
 });
+
+// =========================
+// Batterie EV
+// =========================
+
+app.get("/battery", async (req, res) => {
+
+  try {
+
+    const vehicleId = req.query.vehicleId;
+    const accessToken = req.query.token;
+
+    const response = await fetch(
+      `https://api.smartcar.com/v2.0/vehicles/${vehicleId}/battery`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    res.json(data);
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+  }
+});
+
 // =========================
 // Démarrer serveur
 // =========================

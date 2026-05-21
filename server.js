@@ -117,6 +117,33 @@ app.get("/link", async (req, res) => {
     });
   }
 });
+
+app.get("/vehicles", async (req, res) => {
+
+  try {
+
+    const token = await getAccessToken();
+
+    const response = await fetch(
+      "https://enode-api.sandbox.enode.io/vehicles",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    res.json(data);
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+  }
+});
 // =========================
 // Démarrer serveur
 // =========================

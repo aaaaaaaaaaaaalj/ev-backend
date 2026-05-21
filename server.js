@@ -77,8 +77,10 @@ app.get("/link", async (req, res) => {
 
     const token = await getAccessToken();
 
+    const userId = "mon-user-123";
+
     const response = await fetch(
-      "https://enode-api.sandbox.enode.io/users",
+      `https://enode-api.sandbox.enode.io/users/${userId}/link`,
       {
         method: "POST",
 
@@ -88,7 +90,18 @@ app.get("/link", async (req, res) => {
         },
 
         body: JSON.stringify({
-          vendorType: "TESLA"
+
+          vendorType: "vehicle",
+
+          scopes: [
+            "vehicle:read:data",
+            "vehicle:read:location",
+            "vehicle:control:charging"
+          ],
+
+          language: "fr-FR",
+
+          redirectUri: "https://google.com"
         })
       }
     );
@@ -104,7 +117,6 @@ app.get("/link", async (req, res) => {
     });
   }
 });
-
 // =========================
 // Démarrer serveur
 // =========================

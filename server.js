@@ -58,7 +58,11 @@ app.get("/exchange", async (req, res) => {
         error: "Missing code"
       });
     }
-
+console.log({
+  CLIENT_ID,
+  CLIENT_SECRET_EXISTS: !!CLIENT_SECRET,
+  REDIRECT_URI
+});
     const response = await fetch(
       "https://auth.smartcar.com/oauth/token",
       {

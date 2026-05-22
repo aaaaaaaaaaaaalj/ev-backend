@@ -33,14 +33,15 @@ app.get("/link", async (req, res) => {
   const url =
     `https://connect.smartcar.com/oauth/authorize` +
     `?response_type=code` +
-    `&client_id=${CLIENT_ID}` +
+    `&application_id=adc72f27-5207-4269-9737-5dcff1db5977` +
     `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    `&scope=${encodeURIComponent(scopes)}` 
+    `&scope=${encodeURIComponent(scopes)}`;
 
   res.json({
     connect_url: url
   });
 });
+
 
 // =========================
 // Callback Smartcar

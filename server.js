@@ -35,8 +35,7 @@ app.get("/link", async (req, res) => {
     `?response_type=code` +
     `&client_id=${CLIENT_ID}` +
     `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    `&scope=${encodeURIComponent(scopes)}` +
-    `&mode=test`;
+    `&scope=${encodeURIComponent(scopes)}` 
 
   res.json({
     connect_url: url

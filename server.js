@@ -4,9 +4,10 @@ require("dotenv").config();
 
 const app = express();
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const SMARTCAR_CLIENT_ID = process.env.SMARTCAR_CLIENT_ID;
+const SMARTCAR_CLIENT_SECRET = process.env.SMARTCAR_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
+const SMARTCAR_APP_ID = process.env.SMARTCAR_APP_ID;
 
 // =========================
 // Accueil
@@ -30,12 +31,15 @@ app.get("/link", async (req, res) => {
     "read_location"
   ].join(" ");
 
-  const url =
+ 
+const url =
   `https://connect.smartcar.com/oauth/authorize` +
   `?response_type=code` +
-  `&application_id=${CLIENT_ID}` +
+  `&application_id=${SMARTCAR_APP_ID}` +
   `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
   `&scope=${encodeURIComponent(scopes)}`;
+``
+
 
   res.json({
     connect_url: url
@@ -48,9 +52,7 @@ app.get("/link", async (req, res) => {
 // =========================
 
 app.get("/exchange", async (req, res) => {
-
   try {
-
     const code = req.query.code;
 
     if (!code) {
@@ -58,27 +60,21 @@ app.get("/exchange", async (req, res) => {
         error: "Missing code"
       });
     }
-console.log({
-  CLIENT_ID,
-  CLIENT_SECRET_EXISTS: !!CLIENT_SECRET,
-  REDIRECT_URI
-});
+
     const response = await fetch(
       "https://auth.smartcar.com/oauth/token",
       {
         method: "POST",
-
         headers: {
-          "Content-Type":
-            "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded"
         },
-
-        body:
-          `grant_type=authorization_code` +
-          `&code=${code}` +
-          `&client_id=${CLIENT_ID}` +
-          `&client_secret=${CLIENT_SECRET}` +
-          `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code: code,
+          client_id: SMARTCAR_CLIENT_ID,
+          client_secret: SMARTCAR_CLIENT_SECRET,
+          redirect_uri: REDIRECT_URI
+        })
       }
     );
 
@@ -87,12 +83,16 @@ console.log({
     res.json(data);
 
   } catch (err) {
-
     res.status(500).json({
       error: err.message
     });
   }
 });
+
+
+        
+
+
 
 // =========================
 // Véhicules
